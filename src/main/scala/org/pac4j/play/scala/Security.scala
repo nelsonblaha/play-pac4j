@@ -44,7 +44,7 @@ import play.api.libs.concurrent.Execution.Implicits._
  */
 trait Security[P<:CommonProfile] extends Controller {
 
-  protected val logger = LoggerFactory.getLogger(getClass)
+  val logger = LoggerFactory.getLogger(getClass)
 
   @Inject
   protected var config: Config = null
@@ -62,15 +62,15 @@ trait Security[P<:CommonProfile] extends Controller {
     new Session(map)
   }
 
-  protected def RequiresAuthentication[A](action: P => Action[AnyContent]): Action[AnyContent] = {
+  def RequiresAuthentication[A](action: P => Action[AnyContent]): Action[AnyContent] = {
     RequiresAuthentication(null, null)(action)
   }
 
-  protected def RequiresAuthentication[A](clientName: String)(action: P => Action[AnyContent]): Action[AnyContent] = {
+  def RequiresAuthentication[A](clientName: String)(action: P => Action[AnyContent]): Action[AnyContent] = {
     RequiresAuthentication(clientName, null)(action)
   }
 
-  protected def RequiresAuthentication[A](clientName: String, authorizerName: String)(action: P => Action[AnyContent]): Action[AnyContent] = {
+  def RequiresAuthentication[A](clientName: String, authorizerName: String)(action: P => Action[AnyContent]): Action[AnyContent] = {
     RequiresAuthentication(parse.anyContent, clientName, authorizerName)(action)
   }
 
@@ -84,7 +84,7 @@ trait Security[P<:CommonProfile] extends Controller {
    * @tparam A
    * @return
    */
-  protected def RequiresAuthentication[A](parser: BodyParser[A], clientName: String, authorizerName: String)(action: P => Action[A]) = Action.async(parser) { request =>
+  def RequiresAuthentication[A](parser: BodyParser[A], clientName: String, authorizerName: String)(action: P => Action[A]) = Action.async(parser) { request =>
     val webContext = new PlayWebContext(request, config.getSessionStore)
     val requiresAuthenticationAction = new RequiresAuthenticationAction(config)
     val javaContext = webContext.getJavaContext
